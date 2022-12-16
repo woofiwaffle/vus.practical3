@@ -20,38 +20,6 @@ int randInt(int a, int b) {
 }
 
 
-int lengthInt(int d){                                      // set length(задать длину)
-    if(d == 0){
-        return 1;
-    }
-    int m = 0;
-    while(d){
-        d = d / 10;
-        m++;                                               // amount(количество)
-    }
-    return m;
-}
-
-
-int getCursorPositionY(){             // set the carriage position(задаем позицию каретки)
-    CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo = {};
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &screenBufferInfo);
-    return screenBufferInfo.dwCursorPosition.Y;
-}
-
-
-void matrUpd(int x, int y, int v, int width = 6){           // matrix update(обновление матрицы)
-    COORD coord;
-    coord.X = (x + 1) * width - lengthInt(v);
-    coord.Y = y;
-
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-
-    cout << v << '\r';                                      // carriage return(возврат каретки)
-
-    Sleep(100);
-}
-
 
 void fillZr(int *arr, int N){                               // zero fill(нулевое поле)
     for(int i = 0; i < N * N; ++i){
@@ -61,7 +29,7 @@ void fillZr(int *arr, int N){                               // zero fill(нул�
 
 
 void fillSnk(int *arr, int N){                              // creating a snake(создание змейки)
-    int cursorY = getCursorPositionY();
+    
     matr(arr, N);
 
     int *pArr = arr;
@@ -70,22 +38,16 @@ void fillSnk(int *arr, int N){                              // creating a snake(
         int *pR = (c > 0) ? pArr + N*N - N : pArr - N * N + N;
         while(pArr - c != pR){
             *pArr = randInt(1, N * N);
-            matrUpd((pArr - arr) % N, cursorY + (pArr - arr) / N, *pArr);
             pArr = pArr + c;
         }
         pArr = pArr - c - 1;
         c = -c;
-    }
-
-    for (int i = 0; i < N; i++){                          // return the cursor to the beginning of the matrix(возвращение курсора в начало матрицы)
-        putchar('\n');
     }
 }
 
 
 void fillSpr(int *arr, int N){
 
-    int cursorY = getCursorPositionY();
     matr(arr, N);
 
 
@@ -96,7 +58,6 @@ void fillSpr(int *arr, int N){
         for(int dir = 0; dir < 4; dir++){
             for(int i = 0; i < size - 1; i++){
                 *pArr = randInt(1, N * N);
-                matrUpd((pArr - arr) % N, cursorY + (pArr - arr) / N, *pArr);
                 pArr = pArr + c;
             }
             c = abs(c) == 1 ? N : 1;
@@ -105,19 +66,23 @@ void fillSpr(int *arr, int N){
         size = size - 2;
         pArr = pArr + N + 1;
     }
-
-    for(int i = 0; i < N / 2; i++){
-        putchar('\n');
-    }
 }
 
 
 int *pointQ(int *arr, int N, int quaN) {
     switch(quaN){
-        case 1: return (arr);
-        case 2: return (arr + N / 2);
-        case 3: return (arr + N * N / 2);
-        case 4: return (arr + N * N / 2 + N / 2);
+        case 1:{
+            return (arr);
+        }    
+        case 2:{
+            return (arr + N / 2);
+        }    
+        case 3:{
+            return (arr + N * N / 2);
+        }    
+        case 4:{
+            return (arr + N * N / 2 + N / 2);
+        }    
     }
 }
 
@@ -175,16 +140,15 @@ int main() {
     const int N = 6;
     int mtrx[N][N];
     int *ptrMatr = &mtrx[0][0];
+    cout << "Zero fill array: \n";
     fillZr(ptrMatr, N);
 
-
-
-
-    cout << "\n";                              // output snake array()
-    cout << "Snake array: \n";
     fillSnk(ptrMatr, N);
-    cout << "\n" << "\n";
 
+                                               // output snake array()
+    cout << "Snake array: \n";
+    
+    fillSpk(ptrMatr, N);
 
 
     cout << "Spiral array: \n";                // output spiral array
